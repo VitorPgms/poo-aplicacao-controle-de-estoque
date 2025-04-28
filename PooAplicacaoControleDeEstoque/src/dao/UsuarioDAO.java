@@ -48,11 +48,17 @@ public class UsuarioDAO {
     }
 
     // Listar todos os usuários
-    public List<Usuario> listarTodos() {
+    public List<Usuario> listarTodos() throws SQLException {
         List<Usuario> usuarios = new ArrayList<>();
         String sql = "SELECT * FROM usuarios";
-        try (Connection conn = ConexaoSQLite.conectar();
-             Statement stmt = conn.createStatement();
+        Connection conn = null;
+
+        try {conn = ConexaoSQLite.conectar();
+            if (conn == null){
+                throw new IllegalStateException("Nao foi possivel conectar com o BD");
+            }
+
+        try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Usuario usuario = new Usuario();
@@ -63,8 +69,19 @@ public class UsuarioDAO {
                 usuario.setTipoUsuario(rs.getString("tipo_usuario"));
                 usuarios.add(usuario);
             }
+        }
         } catch (SQLException e) {
             System.out.println("❌ Erro ao listar usuários: " + e.getMessage());
+        } catch (IllegalStateException e){
+            System.out.println(e.getMessage());
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close(); // <-- Fecha a conexão no finally
+                } catch (SQLException e) {
+                    System.out.println("❌ Erro ao fechar conexão: " + e.getMessage());
+                }
+            }
         }
         return usuarios;
     }

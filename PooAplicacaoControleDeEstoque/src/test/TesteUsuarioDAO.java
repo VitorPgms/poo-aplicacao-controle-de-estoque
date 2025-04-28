@@ -3,11 +3,12 @@ package test;
 import dao.UsuarioDAO;
 import model.Usuario;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class TesteUsuarioDAO {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         UsuarioDAO usuarioDAO = new UsuarioDAO();
 
         // Inserir novo usuário

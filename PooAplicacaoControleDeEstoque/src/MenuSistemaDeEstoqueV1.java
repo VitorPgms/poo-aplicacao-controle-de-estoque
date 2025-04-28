@@ -1,14 +1,19 @@
 import dao.*;
+import database.CriarTabelasSQLite;
 import helper.Util;
 import model.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
 public class MenuSistemaDeEstoqueV1 {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
+        inicializarBancoDados();
 
         Scanner scanner = new Scanner(System.in);
         int opcao;
@@ -306,7 +311,7 @@ public class MenuSistemaDeEstoqueV1 {
         } while (opcao != 0);
     }
 
-    private static void submenuUsuario(UsuarioDAO usuarioDAO, Scanner scanner) {
+    private static void submenuUsuario(UsuarioDAO usuarioDAO, Scanner scanner) throws SQLException {
         int opcao;
         do {
             System.out.println("\n=== Menu Usuário ===");
@@ -412,7 +417,7 @@ public class MenuSistemaDeEstoqueV1 {
     }
 
 
-    private static Usuario telaLogin(Scanner scanner, UsuarioDAO usuarioDAO) {
+    private static Usuario telaLogin(Scanner scanner, UsuarioDAO usuarioDAO) throws SQLException {
         System.out.println("\n🔒 Tela de Login - Sistema de Estoque 🔒");
 
         Usuario usuarioAutenticado = null;
@@ -437,6 +442,33 @@ public class MenuSistemaDeEstoqueV1 {
 
         System.out.println("\n✅ Login efetuado com sucesso! Bem-vindo, " + usuarioAutenticado.getNome() + ".");
         return usuarioAutenticado;
+    }
+
+
+    private static void inicializarBancoDados() {
+        System.out.println("\n🔧 Inicializando banco de dados...");
+
+        // 1. Garante que o arquivo do banco existe
+        garantirArquivoBancoExiste();
+
+        // 2. Cria todas as tabelas necessárias
+        CriarTabelasSQLite.criarTabelas();
+    }
+
+    /**
+     * Garante que o arquivo físico do banco existe
+     */
+    private static void garantirArquivoBancoExiste() {
+        File dbFile = new File("./banco_estoque.db");
+        if (!dbFile.exists()) {
+            try {
+                if (dbFile.createNewFile()) {
+                    System.out.println("📄 Arquivo do banco criado: " + dbFile.getAbsolutePath());
+                }
+            } catch (IOException e) {
+                System.err.println("❌ Erro ao criar arquivo do banco: " + e.getMessage());
+            }
+        }
     }
 
 

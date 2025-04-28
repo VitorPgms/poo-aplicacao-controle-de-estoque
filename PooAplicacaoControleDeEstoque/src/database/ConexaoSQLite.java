@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class ConexaoSQLite {
 
-    private static final String URL = "jdbc:sqlite:banco_estoque.db";
+    private static final String URL = "jdbc:sqlite:./banco_estoque.db";
     private static Connection conexao = null;
 
     public static Connection conectar() {
